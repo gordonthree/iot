@@ -1,0 +1,37 @@
+doctype html
+html(lang="en")
+	head
+		meta(name="pagetype",content="nodedetails")
+		title IoT Node Details
+		include ./includes/head.pug
+	body
+		div#page1(data-role="page")
+			div(data-role="header")
+				h1 Iot Node Detail Reports
+			div(data-role="main",class="ui-content")
+				div(data-role="tabs")
+					div(data-role="navbar")
+						ul
+							li
+								a#dtablink1(href="#detailtab1", class="ui-btn-active") Node Summary
+							li
+								a#dtablink2(href="#detailtab2") Temperatures
+							li
+								a#dtablink3(href="#detailtab3") Voltages
+					div#detailtab1(class="ui-content")
+						h2 Summary of active nodes
+						div#tab1box
+						// ajax content here
+					div#detailtab2(class="ui-content")
+						h2 Node temperature data
+						div#tab2box
+						// ajax content here
+					div#detailtab3(class="ui-content")
+						h2 Node voltage data
+						div#tab3box
+						// ajax content here
+
+
+			div(data-role="footer")
+				h2 Footer!
+

@@ -1,0 +1,34 @@
+doctype html
+html(lang="en")
+	head
+		meta(name="pagetype",content="nodecontrol")
+		link(rel="icon", type="image/png", href="/lightswitch.png")
+		title IoT Node Control
+		include ./includes/head.pug
+		script(src="/myscript.js")
+	body#mainpage
+		div#pageone(data-role="page")
+			div#diagPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
+				h2#diagText Device Messages
+				ul#diagList(data-role="listview", data-mini="true")
+					li Newest entry first
+			div#rawPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
+				h2#rawText Raw Values
+				ul#rawList(data-role="listview", data-mini="true")
+			div#configPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
+				h2#configText Node Configuration
+				div#configList
+			div(data-role="header")
+				h2#headerText Connecting...
+			div#mainbody(data-role="main", class="ui-content")
+				// dynamically generated html goes here
+			div(class="ui-grid-b")
+				div(class="ui-block-a", align="left")
+					a#logbtn(href="#diagPanel", class="ui-btn ui-btn-inline ui-corner-all ui-shadow") Messages
+				div(class="ui-block-b", align="middle")
+					a#rawbtn(href="#rawPanel", class="ui-btn ui-btn-inline ui-corner-all ui-shadow") Raw
+				div(class="ui-block-c", align="right")
+					a#configbtn(href="#configPanel", class="ui-btn ui-btn-inline ui-corner-all ui-shadow") Config
+			div(data-role="footer")
+				h2#footerText Not connected!
+				h2#footer2

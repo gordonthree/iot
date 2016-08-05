@@ -1,0 +1,219 @@
+var viewportWidth = $(window).width();
+var doRefresh;
+var macAddr;
+
+function addZero(i) {
+		if (i < 10) {
+				i = "0" + i;
+		}
+		return i;
+}
+
+function noSpaces(i) {
+	i = i.replace(/\s+/g, '');
+	return i;
+}
+
+function isNew(_array, _item) {
+	for (var x=0; x<_array.length; x++) {
+		if (_array[x]===_item) return true;
+	}
+	return false;
+}
+
+$(document).on("pagebeforecreate",function(){
+});
+
+$(document).on("pagecreate",function() {
+	var pageType = $( "meta[name=pagetype]" ).attr("content");
+
+	if (pageType==="nodelist") {
+		loadNodelist();
+		setRefresh();
+	} 
+
+	$("body")
+		.on("change","#autoupdate", autoUpdate)
+		.on("click","a.configLink", openConfig)
+		.on("click","#dtablink1,#dtablink2,#dtablink3 ",loadDetails)
+		.on("panelopen", "#configPanel", loadConfig)
+		.on("panelbeforeclose", "#configPanel", clearConfig)
+		.on("blur","input.configinput", configChanged)
+		.on("focus","input.configinput", clearRefresh) // clear refresh timer if a input has focus
+		.on("mouseover mouseleave",".configinput", doHighlight)
+		.on("mouseover mouseleave","td", doHighlight);
+
+	function clearRefresh(){
+		clearInterval(doRefresh); // stop refresh timer
+	}
+
+	function setRefresh(){
+		doRefresh = setInterval(loadNodelist, 5000); // refresh nodelist every 5 seconds
+	}
+
+	function autoUpdate(){
+		var val = $(this).val();
+		if (val==="on") setRefresh();
+		else clearRefresh();
+	}
+
+	function doHighlight(e) {
+		if (e.type == 'mouseover') {
+			$(this).addClass("highlight").parent().addClass("highlight");
+			//$("colgroup").eq($(this).index()).addClass("highlight");
+		}
+		else {
+			$(this).removeClass("highlight").parent().removeClass("highlight");
+			//$("colgroup").eq($(this).index()).removeClass("highlight");
+		}
+	}
+
+	function loadDetails() {
+		var myId = $(this).attr("id");
+		alert(myId);
+
+		/*
+		$.getJSON(query, function(result) {
+			var container = $('<div>');
+			var table = $('<table>',{'data-role':'table', 'class':'ui-responsive'}).appendTo( container );
+			$.each(result, function(key,value) {
+				var tr = $('<tr>',{'class':'configrow'});
+				var field = $('<td>', {'class':'configfield'}).html(key).appendTo( tr );
+				var data =  $('<td>', {'class':'configdata'}).appendTo( tr );
+				if (readOnlys.indexOf(key)>=0) { // disabled text box for fields the user shouldnt change
+					$( "<p>" ).html(value).appendTo( data );
+				} else {
+					$( "<input>", {'class':'configinput','name':'config_'+key,'old-value':value,'value':value,'data-wrapper-class':'ui-custom'}).appendTo( data );
+				}
+				$( table ).append( tr );
+			});
+			//$( table ).appendTo( "#configList" ).enhanceWithin();
+			//$( table ).appendTo("#configList");
+			if (pageType!="nodelist") { // add some websocket command buttons if ws is available
+				var controlGroup = $('<div>', {'data-role':'controlgroup'}).appendTo( container );
+				$( "<a>", {'class':'ui-btn ui-btn-inline ui-corner-all ui-shadow ui-data-mini', 'id':'updatebtn'}).html("Update").appendTo( controlGroup );
+				$( "<a>", {'class':'ui-btn ui-btn-inline ui-corner-all ui-shadow ui-data-mini','id':'rebootbtn'}).html("Reboot").appendTo( controlGroup );
+			}
+			$( container ).appendTo( target ).enhanceWithin();
+			$( "#configPanel" ).trigger( "updatelayout" );
+
+		});
+		*/
+	}
+
+	function configChanged(e) {
+		if (macAddr===undefined) macAddr=$(this).attr("mac-addr");
+		if (macAddr===undefined) {
+			alert("No mac address");
+			return;
+		}
+
+		var myName = $( this ).attr('name');
+		var myValue = $( this ).val();
+		var oldVal = $( this ).attr('old-value');
+		if (oldVal===myValue) return;
+		var myName = myName.substr(7); // trim off "config_" from the db field name
+		//alert(nodeMac +':\n'+ myName +'='+ myValue);
+		$.post( "/nodeupdate", { mac: macAddr, key: myName, val: myValue }, function( data ) {
+			console.log(data);
+		});
+	}
+
+	function openConfig() {
+		macAddr = $(this).attr("mac-addr");
+		$( "#configPanel" ).panel( "open" );
+	}
+
+	function loadConfig() {
+		if (macAddr===undefined) macAddr = $( "meta[name=devicemac]" ).attr('content');
+		if (macAddr===undefined) {
+			alert("No mac address.");
+			return;
+		}
+		var query;
+		var target;
+
+		if (pageType!="nodelist") {
+			query = "/iotconfig?readconfig=true&mac=" +macAddr;
+			target = "#configList"; }
+		else {
+			query = "/iotconfig?readconfig=true&full=yes&mac=" +macAddr;
+			target = "#configList"; 
+		}
+
+		$.getJSON(query, function(result) {
+			var container = $('<div>');
+			var table = $('<table>',{'data-role':'table', 'class':'ui-responsive'}).appendTo( container );
+			$.each(result, function(key,value) {
+				var tr = $('<tr>',{'class':'configrow'});
+				var field = $('<td>', {'class':'configfield'}).html(key).appendTo( tr );
+				var data =  $('<td>', {'class':'configdata'}).appendTo( tr );
+				if (readOnlys.indexOf(key)>=0) { // disabled text box for fields the user shouldnt change
+					$( "<p>" ).html(value).appendTo( data );
+				} else {
+					$( "<input>", {'class':'configinput','name':'config_'+key,'old-value':value,'value':value,'data-wrapper-class':'ui-custom'}).appendTo( data );
+				}
+				$( table ).append( tr );
+			});
+			//$( table ).appendTo( "#configList" ).enhanceWithin();
+			//$( table ).appendTo("#configList");
+			if (pageType!="nodelist") { // add some websocket command buttons if ws is available
+				var controlGroup = $('<div>', {'data-role':'controlgroup'}).appendTo( container );
+				$( "<a>", {'class':'ui-btn ui-btn-inline ui-corner-all ui-shadow ui-data-mini', 'id':'updatebtn'}).html("Update").appendTo( controlGroup );
+				$( "<a>", {'class':'ui-btn ui-btn-inline ui-corner-all ui-shadow ui-data-mini','id':'rebootbtn'}).html("Reboot").appendTo( controlGroup );
+			}
+			$( container ).appendTo( target ).enhanceWithin();
+			$( "#configPanel" ).trigger( "updatelayout" );
+
+		});
+	}
+
+
+	function clearConfig() {
+		$("#configList").empty();
+	}
+
+
+	function loadNodelist() {
+		$.getJSON("/nodelist?get=json", function(result) {
+			var myMac="";
+
+			// create empty table
+			var table = $('<table>',{'id':'nodelist'});
+
+			// first do the table header
+			var headerRow = $('<thead>',{'class':'nlheaderow'});
+			$.each(result[0], function(key,value) {
+				var colPri = columnOrder.indexOf(key) + 1;
+				if (colPri==0) colPri = 6;
+				var th = $('<th>', {'class':key,'data-priority':colPri}).html(key).appendTo( headerRow );
+			});
+			$( table ).append( headerRow );
+			var tbody = $('<tbody>').appendTo( table );
+			// now the nodelist itself
+			$.each(result, function(row,columns) { // iterate rows
+				var tr = $('<tr>',{'class':'nlrow'}).appendTo( tbody );
+				$.each(columns, function(key,value) { // interate columns
+					var data = $('<td>', {'class':key}).appendTo( tr );
+					if (key==="mac") { // mac address links to nodedetail
+						myMac = value;
+						var a = $( "<a>", {'href':'#','class':'configLink','mac-addr':myMac}).html(value).appendTo( data );
+					} else if (key==="currentip") { // mac address links to nodedetail
+						var a = $( "<a>", {'href':'/nodecontrol?mac=' +myMac+ '&ip=' +value,'target':'_blank'}).html(value).appendTo( data );
+					} else if (readOnlys.indexOf(key)>=0) {
+						var input = $( "<p>" ).html(value).appendTo( data );
+					} else {
+						var input = $( "<input>", {'class':'configinput ' +key,'name':'config_'+key,'old-value':value,'mac-addr':myMac,'value':value,'data-wrapper-class':'ui-custom'}).appendTo( data );
+					}
+				});
+
+				$( table ).append( tr );
+			});
+			
+			$( "#mainbody" ).empty(); // clear out old table
+			$( table ).appendTo( "#mainbody" ).enhanceWithin(); // append new table
+			//$( "#nodelist" ).colResizable({liveDrag:true});
+		});
+	}
+
+});

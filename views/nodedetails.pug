@@ -1,0 +1,39 @@
+doctype html
+html(lang="en")
+	head
+		meta(name="pagetype",content="nodedetails")
+		link(rel="icon", type="image/png", href="/favicon.png")
+		title IoT Node Management
+		include ./includes/head.pug
+	body
+		-var cnt=1;
+		div#page1(data-role="page")
+			//- Panels go here
+			div#configPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
+				h2#configText Node Configuration
+				div#configList
+
+			div(data-role="header")
+				a#mgmtconfig(href="#mgmtconfig",data-icon="gear") Config
+				h1#headerText IoT Node Management
+				a#autorefresh(href="#",data-inline="true",data-icon="refresh") Refresh
+
+			div(data-role="main",class="ui-content")
+				div(data-role="tabs")
+					div(data-role="navbar")
+						//- populate navbar from data passed
+						ul
+							each tab in tabs
+								li
+									a(id="dtablink" +cnt,class="dtablink",ro=tab.ro,href="#detailtab" +cnt)= tab.name
+								-cnt++;
+					-cnt=1;
+					//- build empty tabs ready to receive ajax data
+					each tab in tabs
+						div(id="detailtab" +cnt, class="ui-content")
+							h2(style="text-align:center")= tab.desc
+							// ajax content below
+							div(id="tab" +cnt+ "box")
+						-cnt++;
+
+			include ./includes/foot.pug

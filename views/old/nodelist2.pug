@@ -1,0 +1,33 @@
+doctype html
+html(lang="en")
+	head
+		title IoT Node List
+		include ./includes/head.pug
+
+	body
+		div#page1(data-role="page")
+			div(data-role="header")
+				h1#header IoT Node List
+			div(data-role="main",class="ui-content")
+				table
+					tr.nlheader
+						each field in fields
+							th= field.name
+					each row in nodes
+						tr.nlnode
+							each value, index in row
+								if index=="mac"
+									-var macAddr= value
+									td.configdata
+										a(href="/nodedetail?mac="+value, target="_blank")= value
+								else if index=="currentip" && value!="0.0.0.0"
+									td.configdata
+										a(href="/nodecontrol?mac="+macAddr+"&ip="+value, target="_blank")= value
+								else
+									if readOnlys.indexOf(index)>=0
+										td.configdata= value
+									else
+										td.configdata
+											input.configinput(name="config_"+index, mac-addr=macAddr, old-value=value, value=value, data-wrapper-class="ui-custom")
+			div(data-role="footer")
+				h2 Footer!

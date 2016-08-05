@@ -1,0 +1,13 @@
+head
+	meta(name="viewport", content="width=device-width", initial-scale="1")
+	meta(name="deviceip", content=deviceip)
+	meta(name="devicemac", content=mac)
+	link(rel="stylesheet", href="/jquery.mobile.min.css")
+	link(rel='stylesheet', href='/less-css/styles.css')
+	script(src="/jquery.min.js")
+	script(src="/colresizable.min.js")
+	script(src="/jquery.mobile.min.js")
+	script(src="/nodescript.js")
+	script(type='text/javascript').
+		var readOnlys = ["mac","ts","id","lastseen","updatets","currentip","flashmb","flash"];
+		var columnOrder = ["currentip","nodename","lastseen","mac"];

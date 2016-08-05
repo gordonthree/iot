@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+	head
+		link(rel="icon", type="image/png", href="/favicon.png")
+		meta(name="pagetype",content="nodelist")
+		title IoT Node List
+		include ./includes/head.pug
+
+	body
+		div#page1(data-role="page")
+			div#configPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
+				h2#configText Node Configuration
+				div#configList
+			div(data-role="header")
+				h1#header IoT Node List
+			div#mainbody(data-role="main",class="ui-content")
+				// nodelist goes here
+
+			include ./includes/foot.pug

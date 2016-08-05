@@ -1,0 +1,27 @@
+body {
+  font-family: "Arial", "sans-serif";
+}
+table {
+  border-collapse: collapse;
+  width: 75%;
+}
+th {
+  border-style: solid;
+  border-bottom: 3px solid;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  text-align: left;
+}
+td {
+  border-style: solid;
+  border-bottom: 2px solid #ddd;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  text-align: left;
+  font-size: 80%;
+}
+.highlight {
+  background-color: "AliceBlue";
+}

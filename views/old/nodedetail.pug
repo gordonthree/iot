@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+	head
+		meta(name="pagetype",content="nodedetail")
+		title IoT Node Detail
+		include ./includes/head.pug
+		-var readOnlys = ["mac","ts","id","lastseen","updatets","currentip","flashmb","flash"];
+	body
+		div#page1(data-role="page")
+			div(data-role="header")
+				h1= "Details for node " +mac
+			div(data-role="main",class="ui-content")
+				table
+					tr
+						th Tools
+						th Field
+						th Value
+					each value, index in nodes[0]
+						tr
+							//- toolbar icons here
+							td= "X ! ?"
+							
+							//- db column name
+							td.configfield= index
+
+							//- db column value
+							if readOnlys.indexOf(index)>=0
+								td.configdata
+									input.configinput(value=value, data-wrapper-class="ui-custom", disabled="true")
+							else
+								td.configdata
+									input.configinput(name="config_"+index, old-value=value, value=value, data-wrapper-class="ui-custom")
+			div(data-role="footer")
+				h2 Footer!
+
