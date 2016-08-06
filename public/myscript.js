@@ -113,11 +113,13 @@ $(document).on("pagecreate",function() {
 									case 'raw2':
 										rawvalue(cmds[0] +'='+ cmds[1]);
 										break;
+									case 'rgb':
 									case 'label':
 									case 'switch':
 										var switchName = cmds[1];
 										switches[swCount] = switchName;
 										var _sw = parseInt(swCount) + 1;
+										var isRGB = (cmds[0]=="rgb");
 
 										// setup some labels
 										var switchID = 'ch' +_sw+ 'en';
@@ -132,24 +134,61 @@ $(document).on("pagecreate",function() {
 										var swBox = $('<select>', {'id':switchID,'name':switchID,'class':'chpwr','data-mini':'true','data-role':'flipswitch'}).appendTo(swField);
 										var swOff = $('<option>', {'value':'0'}).html('Off').appendTo(swBox);
 										var swOn = $('<option>', {'value':'1'}).html('On').appendTo(swBox);
-										var modeField = $('<div>', {'class':'ui-field-contain'}).appendTo(controlGroup);
-										var modeLabel = $('<label>', {'for':modeID}).html('Mode').appendTo(modeField);
-										var modeBox = $('<select>', {'id':modeID,'name':modeID, 'class':'chfnc' }).appendTo(modeField);
-										var mode0 = $('<option>', {'value':'0','selected':''}).html('Manual').appendTo(modeBox);
-										var mode1 = $('<option>', {'value':'1'}).html('Duration').appendTo(modeBox);
-										var mode2 = $('<option>', {'value':'2'}).html('Interval').appendTo(modeBox);
-										var onOffField = $('<div>', {'class':'ui-field-contain'}).appendTo(controlGroup);
-										var onLabel = $('<label>', {'for':onID }).html('On Time (interval)').appendTo(onOffField);
-										var onBox = $('<input>', {'type':'number','id':onID,'name':onID,'class':'numbox','value':'0','data-mini':'true'}).appendTo(onOffField);
-										var offLabel = $('<label>', {'for':offID }).html('Off Time (duration)').appendTo(onOffField);
-										var offBox = $('<input>', {'type':'number','id':offID,'name':offID,'class':'numbox','value':'0','data-mini':'true'}).appendTo(onOffField);
-
+										if (isRGB) {
+											var rgbField = $('<div>', {'class':'ui-field-contain'}).appendTo(controlGroup);
+											var rgbInput = $('<input>', {'type':'text','id':'full'}).appendTo(rgbField);
+											var rgbLog = $('<em>', {'id':'basic-log'}).appendTo(rgbField);
+										} else {
+											var modeField = $('<div>', {'class':'ui-field-contain'}).appendTo(controlGroup);
+											var modeLabel = $('<label>', {'for':modeID}).html('Mode').appendTo(modeField);
+											var modeBox = $('<select>', {'id':modeID,'name':modeID, 'class':'chfnc' }).appendTo(modeField);
+											var mode0 = $('<option>', {'value':'0','selected':''}).html('Manual').appendTo(modeBox);
+											var mode1 = $('<option>', {'value':'1'}).html('Duration').appendTo(modeBox);
+											var mode2 = $('<option>', {'value':'2'}).html('Interval').appendTo(modeBox);
+											var onOffField = $('<div>', {'class':'ui-field-contain'}).appendTo(controlGroup);
+											var onLabel = $('<label>', {'for':onID }).html('On Time (interval)').appendTo(onOffField);
+											var onBox = $('<input>', {'type':'number','id':onID,'name':onID,'class':'numbox','value':'0','data-mini':'true'}).appendTo(onOffField);
+											var offLabel = $('<label>', {'for':offID }).html('Off Time (duration)').appendTo(onOffField);
+											var offBox = $('<input>', {'type':'number','id':offID,'name':offID,'class':'numbox','value':'0','data-mini':'true'}).appendTo(onOffField);
+										}
 										// add it to the page
+
+										if (isRGB) { 
+											// setup the color picker element
+											 $( rgbInput ).spectrum({
+												allowEmpty:true,
+												showInput: true,
+												showInitial: true,
+												showSelectionPalette: true,
+												color: "#f00",
+												maxPaletteSize: 10,
+												preferredFormat: "hex",
+												localStorageKey: "spectrum.demo",
+												showAlpha: true,
+												clickoutFiresChange: true,
+												showButtons: false,
+												move: function(color) {
+													var red = parseInt((color._r+1)*16)-1;
+													var blue = parseInt((color._g+1)*16)-1;
+													var green = parseInt((color._b+1)*16)-1;
+													var white = 4095-parseInt(color._a*4096);
+													if (white<0) white=0;
+													if (red<=16) red=0; if (blue<=16) blue=0; if (green<=16) green=0;
+													//alert("r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white);
+													socket.send("red="+red);
+													socket.send("blue="+blue);
+													socket.send("green="+green);
+													socket.send("white="+white);
+													var logMsg = "r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white;
+													$("#basic-log").text(logMsg);
+													rawvalue(logMsg);
+												}
+											});
+										}
 										$( controlGroup ).appendTo('#mainbody').enhanceWithin();
 
 										swCount++; // increment switch counter
 										break;
-
 									case 'sw1':
 										var state=parseInt(cmds[1]);
 										var swState=parseInt($("#ch1en").val);
@@ -202,6 +241,7 @@ $(document).on("pagecreate",function() {
 					} catch(exception){
 						 message('<li>Error'+exception);
 					}
+
 
 
 					$("body")

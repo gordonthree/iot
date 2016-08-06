@@ -5,7 +5,10 @@ html(lang="en")
 		link(rel="icon", type="image/png", href="/lightswitch.png")
 		title IoT Node Control
 		include ./includes/head.pug
+		script(src='/spectrum.js')
+		link(rel='stylesheet',href='/spectrum.css')
 		script(src="/myscript.js")
+			
 	body#mainpage
 		div#pageone(data-role="page")
 			div#diagPanel(data-role="panel", data-display="overlay", data-swipe-close="true", data-dismissible="true")
