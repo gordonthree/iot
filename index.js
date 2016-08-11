@@ -230,7 +230,7 @@ app.get('/iotconfig', function (req, res) {
 		else sqlQuery = 'SELECT mac,nodename,mqttserver,mqttport,altadcvbat,'
 								+'mqttpub,mqttsub,mqttbase,sleepenable,sleepperiod,'
 								+'cfgversion,fwversion,usegetvcc,vccdivsor,vccoffset,'
-								+'hastout,hastpwr,hasiout,hasi2cpwr,rawadc,ntpoffset,'
+								+'hastout,hastpwr,owdat,hasiout,hasi2cpwr,rawadc,ntpoffset,'
 								+'hasspeed,hasi2c,iotsda,iotscl,hasvout,hasrssi,updaterate,'
 								+'sw1en,sw2en,sw3en,sw4en,sw1pin,sw2pin,sw3pin,sw4pin,'
 								+'sw1label,sw2label,sw3label,sw4label,acsoffset,'

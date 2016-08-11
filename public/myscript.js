@@ -156,8 +156,8 @@ $(document).on("pagecreate",function() {
 										if (isRGB) { 
 											// setup the color picker element
 											 $( rgbInput ).spectrum({
+												flat:true,
 												allowEmpty:true,
-												showInput: true,
 												showInitial: true,
 												showSelectionPalette: true,
 												color: "#f00",
@@ -166,24 +166,10 @@ $(document).on("pagecreate",function() {
 												localStorageKey: "spectrum.demo",
 												showAlpha: true,
 												clickoutFiresChange: true,
-												showButtons: false,
-												move: function(color) {
-													var red = parseInt((color._r+1)*16)-1;
-													var blue = parseInt((color._g+1)*16)-1;
-													var green = parseInt((color._b+1)*16)-1;
-													var white = 4095-parseInt(color._a*4096);
-													if (white<0) white=0;
-													if (red<=16) red=0; if (blue<=16) blue=0; if (green<=16) green=0;
-													//alert("r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white);
-													socket.send("red="+red);
-													socket.send("blue="+blue);
-													socket.send("green="+green);
-													socket.send("white="+white);
-													var logMsg = "r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white;
-													$("#basic-log").text(logMsg);
-													rawvalue(logMsg);
-												}
+												showButtons: false
 											});
+											$( rgbInput ).on("dragstart.spectrum", colorChange)
+														 .on("dragstop.spectrum", colorChange);
 										}
 										$( controlGroup ).appendTo('#mainbody').enhanceWithin();
 
@@ -230,8 +216,12 @@ $(document).on("pagecreate",function() {
 									} // end switch
 							} // end socket.message
 							
+							socket.onerror = function(){
+								message('<li class="message">WebSocket Error'); 
+							}
 
 							socket.onclose = function(){
+								 $("#mainbody").empty();
 								message('<li class="event">Socket Status: '+socket.readyState+' (Closed)');
 								 $("#footerText").html("Connection lost!");
 								 $("#headerText").html("Disconnected");
@@ -249,6 +239,36 @@ $(document).on("pagecreate",function() {
 						.on("click","#updatebtn", sendBtn)
 						.on("blur",".numbox", numBlur)
 						.on("change", ".chpwr", flipChanged);
+					function specDragStart(e, color) {
+						myID = $( this ).attr("id");
+						console.log(myID +"="+ color._r +", "+ color._g +", "+ color._b +", "+ color._a);
+					}
+
+					function specDragStop(e, color) {
+						myID = $( this ).attr("id");
+						console.log(myID +"="+ color._r +", "+ color._g +", "+ color._b +", "+ color._a);
+					}
+					
+					function colorChange(e,color) {
+						var myName = $( this ).attr('name');
+						var red = parseInt((color._r+1)*16)-1;
+						var blue = parseInt((color._b+1)*16)-1;
+						var green = parseInt((color._g+1)*16)-1;
+						var white = 4095-parseInt(color._a*4096);
+						if (white<0) white=0;
+						if (red<=16) red=0; if (blue<=16) blue=0; if (green<=16) green=0;
+						//alert("r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white);
+						var bufferMsg = "wsbuffer=" +socket.bufferedAmount
+						rawvalue(bufferMsg);
+						if (socket.bufferedAmount==0) { // only send if the buffer is empty
+							socket.send("red="+red);
+							socket.send("blue="+blue);
+							socket.send("green="+green);
+							socket.send("white="+white);
+							var logMsg = myName + " r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white;
+							rawvalue(logMsg);
+						}
+					}
 
 					function numBlur() {
 						var myName = $( this ).attr('name');
