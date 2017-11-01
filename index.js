@@ -23,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(morgan('dev'));
 app.use(nodeadmin(app));
 app.set('view engine', 'pug');
+app.set('views', __dirname + '/views');
 app.use('/less-css', expressLess(__dirname + '/less', { debug: true }));
 app.use(express.static(__dirname + '/public'));
 app.locals.pretty = true;
@@ -44,6 +45,9 @@ client.on('message', function (_topic, _message) {
 	var query;
 	var sql = []; // empty array for sql objects
 
+	// bail out for now, sql logging takes place in node red
+	return;
+
 	if (message.indexOf("=")) {
 		data = message.split("=");
 		payload = data[1];
@@ -57,12 +61,16 @@ client.on('message', function (_topic, _message) {
 					+"ON DUPLICATE KEY UPDATE "
 					+"topic=\'"+ topic +"\',"
 					+"payload=\'"+ payload +"\',"
-					+"lastseen=CURRENT_TIMESTAMP";
+					+"lastseen=CURRENT_TIMESTAMP"; 
 		sql.push(query); // add query to sql array
 	}
 
 	if ((topics[2]==="temperature") || (topics[2]==="temp")) { // log temps
-		query  = "INSERT INTO temps (topic,temp) VALUES (\'"+ nodename +"\',\'"+ payload +"\')";
+		query  = "INSERT INTO temps (topic,temp) VALUES (\'"+ nodename +"\',\'"+ payload +"\') "
+				+"ON DUPLICATE KEY UPDATE "
+				+"topic=\'"+ nodename +"\',"
+				+"temp=\'"+ payload +"\'";
+
 		sql.push(query); // add query to sql array
 						
 		query  = "INSERT INTO current_temps (nodename,temperature) "
@@ -77,7 +85,9 @@ client.on('message', function (_topic, _message) {
 					+"ON DUPLICATE KEY UPDATE battery=\'"+ payload +"\'";    
 		sql.push(query); // add query to sql array
 
-		query = "INSERT INTO vbat_history (nodename,battery) VALUES (\'"+ nodename +"\',\'"+ payload +"\');";
+		query = "INSERT INTO vbat_history (nodename,battery) VALUES (\'"+ nodename +"\',\'"+ payload +"\') "
+				+"ON DUPLICATE KEY UPDATE "
+				+"battery=\'"+ payload +"\'";
 		sql.push(query); // add query to sql array
 	}
 
@@ -93,14 +103,16 @@ client.on('message', function (_topic, _message) {
 
 	if (topics[2]==="amps0" || topics[2]==="amps1" || topics[2]==="amps2" || topics[2]==="amps3") { // log signal strength
 		query = "INSERT INTO amps (nodename,sensor,value) "
-					+"VALUES (\'"+ nodename +"\',\'"+ topics[2] +"\',\'"+ payload +"\') ";
+					+"VALUES (\'"+ nodename +"\',\'"+ topics[2] +"\',\'"+ payload +"\') "
+					+"ON DUPLICATE KEY UPDATE "
+					+"value=\'"+ payload +"\'";
 		sql.push(query); // add query to sql array
 	} 
 
   	iotdb.getConnection(function(err, connection){ // grab db connection from pool
 		sql.forEach(function(sql,index) { // loop through any sql generated above
 			connection.query(sql, function(err,rows) {
-				if (err) throw err; // log any errors
+				if (err) console.log("this sql dont work " + sql); // log any errors
 			});
 		});
 		connection.release(); // release db connection
