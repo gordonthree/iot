@@ -251,12 +251,12 @@ $(document).on("pagecreate",function() {
 					
 					function colorChange(e,color) {
 						var myName = $( this ).attr('name');
-						var red = parseInt((color._r+1)*16)-1;
-						var blue = parseInt((color._b+1)*16)-1;
-						var green = parseInt((color._g+1)*16)-1;
-						var white = 4095-parseInt(color._a*4096);
+						var red = parseInt(color._r);
+						var blue = parseInt(color._b);
+						var green = parseInt(color._g);
+						var white = parseInt(255*color._a); //a is decimal 0.0 to 1.0 for "alpha"
 						if (white<0) white=0;
-						if (red<=16) red=0; if (blue<=16) blue=0; if (green<=16) green=0;
+						if (red<0) red=0; if (blue<0) blue=0; if (green<0) green=0;
 						//alert("r=" +red+ " b=" +blue+ " g=" +green+ " w=" + white);
 						var bufferMsg = "wsbuffer=" +socket.bufferedAmount
 						rawvalue(bufferMsg);
