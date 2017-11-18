@@ -133,7 +133,7 @@ app.get('/nodelist', function (req, res) {
 			var sqlQuery = "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'lastseen', "
 							+"mac,nodename,currentip,cfgversion,fwversion,fwpath,flashmb as 'flash' "
 							+"from nodelist "
-							+"order by nodename;";
+							+"order by lastseen desc;";
 			connection.query(sqlQuery, function(err, rows, fields) {
 				if ((!err) && (rows.length>0)) res.send(rows)
 			});
@@ -156,7 +156,7 @@ app.get('/nodedetails', function (req, res) {
 				sql: "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'lastseen', \
 						mac,nodename,currentip,cfgversion,fwversion,fwpath,flashmb as 'flash' \
 						from nodelist \
-						order by nodename"
+						order by lastseen desc"
 			};
 
 	sql[1] = {	name: "Summary",
@@ -244,9 +244,9 @@ app.get('/iotconfig', function (req, res) {
 								+'cfgversion,fwversion,usegetvcc,vccdivsor,vccoffset,'
 								+'hastout,hastpwr,owdat,hasiout,hasi2cpwr,rawadc,ntpoffset,'
 								+'hasspeed,hasi2c,iotsda,iotscl,hasvout,hasrssi,updaterate,'
-								+'sw1en,sw2en,sw3en,sw4en,sw1pin,sw2pin,sw3pin,sw4pin,'
+								+'sw1en,sw2en,sw3en,sw4en,sw1pin,sw2pin,sw3pin,sw4pin,hasadc,'
 								+'sw1label,sw2label,sw3label,sw4label,acsoffset,timeout,'
-								+'sw1type,sw2type,sw3type,sw4type,hasrgb,hasfan '
+								+'sw1type,sw2type,sw3type,sw4type,hasrgb,hasfan,rgbwchan '
 								+'FROM nodelist ' +where;
 
 		var sqlUpdate = "SELECT 1";
