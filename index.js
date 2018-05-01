@@ -246,7 +246,8 @@ app.get('/iotconfig', function (req, res) {
 								+'hasspeed,hasi2c,iotsda,iotscl,hasvout,hasrssi,updaterate,'
 								+'sw1en,sw2en,sw3en,sw4en,sw1pin,sw2pin,sw3pin,sw4pin,hasadc,'
 								+'sw1label,sw2label,sw3label,sw4label,acsoffset,timeout,'
-								+'sw1type,sw2type,sw3type,sw4type,hasrgb,hasfan,rgbwchan '
+								+'sw1type,sw2type,sw3type,sw4type,hasrgb,hasfan,rgbwchan,'
+								+'haststat,tstatmode,tstatset '
 								+'FROM nodelist ' +where;
 
 		var sqlUpdate = "SELECT 1";
