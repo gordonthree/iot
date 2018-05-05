@@ -239,7 +239,7 @@ app.get('/iotconfig', function (req, res) {
 		if (macAddr===undefined) where = "WHERE nodename like \'" +nodeName+ "\'";
 
 		if (fullConfig=="yes")  sqlQuery = 'SELECT * FROM nodelist ' +where;
-		else sqlQuery = 'SELECT mac,nodename,mqttserver,mqttport,altadcvbat,'
+		else sqlQuery = 'SELECT mac,nodename,mqttserver,mqttport,altadcvbat,iotserver,'
 								+'mqttpub,mqttsub,mqttbase,sleepenable,sleepperiod,'
 								+'cfgversion,fwversion,usegetvcc,vccdivsor,vccoffset,'
 								+'hastout,hastpwr,owdat,hasiout,hasi2cpwr,rawadc,ntpoffset,'
