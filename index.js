@@ -130,7 +130,7 @@ app.get('/nodelist', function (req, res) {
 	var get = req.query.get;
 	if (get=="json") { // send JSON data to page for live updates
 		iotdb.getConnection(function(err, connection){
-			var sqlQuery = "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'lastseen', "
+			var sqlQuery = "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'last seen', "
 							+"mac,nodename,currentip,cfgversion,fwversion,fwpath,flashmb as 'flash' "
 							+"from nodelist "
 							+"order by lastseen desc;";
@@ -153,7 +153,7 @@ app.get('/nodedetails', function (req, res) {
 	sql[0] = {	name: "Nodelist",
 				desc: "Node Configuration Detail",
 				ro: 0,
-				sql: "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'lastseen', \
+				sql: "select DATE_FORMAT(lastseen,'%b %d %Y %H:%i') as 'last seen', \
 						mac,nodename,currentip,cfgversion,fwversion,fwpath,flashmb as 'flash' \
 						from nodelist \
 						order by lastseen desc"
