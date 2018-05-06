@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.50, for debian-linux-gnu (armv7l)
+-- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (armv8l)
 --
 -- Host: localhost    Database: iot
 -- ------------------------------------------------------
--- Server version	5.5.50-0+deb8u1
+-- Server version	5.5.60-0+deb8u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,19 +27,19 @@ CREATE TABLE `nodelist` (
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mac` varchar(12) NOT NULL,
   `nodename` varchar(32) NOT NULL,
-  `fwpath` varchar(200) DEFAULT '/home/pi/fw/autoconf_1m.bin',
+  `fwpath` varchar(200) DEFAULT '/home/pi/fw/autoconf_4m.bin',
   `spiffspath` varchar(200) DEFAULT NULL,
   `lastseen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updatets` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `cfgversion` int(11) DEFAULT '1000',
   `fwversion` int(11) DEFAULT '1000',
   `fsversion` int(11) DEFAULT '1000',
-  `mqttserver` varchar(200) DEFAULT 'mypi3',
+  `mqttserver` varchar(200) NOT NULL DEFAULT '192.168.2.30',
   `mqttport` int(11) DEFAULT '1883',
   `mqttbase` varchar(32) DEFAULT 'home',
   `mqttpub` varchar(32) DEFAULT 'msg',
   `mqttsub` varchar(32) DEFAULT 'cmd',
-  `iotserver` varchar(16) DEFAULT 'mypi3',
+  `iotserver` varchar(200) NOT NULL DEFAULT '192.168.2.30',
   `iotport` varchar(6) DEFAULT '3000',
   `iotcfgurl` varchar(100) DEFAULT 'iotconfig',
   `iotfwurl` varchar(100) DEFAULT 'iotfw',
@@ -47,6 +47,7 @@ CREATE TABLE `nodelist` (
   `subnet` varchar(16) DEFAULT NULL,
   `dns1` varchar(16) DEFAULT NULL,
   `ntpserver` varchar(200) DEFAULT 'us.pool.ntp.org',
+  `ntpoffset` tinyint(4) DEFAULT '4',
   `role` varchar(200) DEFAULT NULL,
   `location` varchar(200) DEFAULT NULL,
   `notes` varchar(200) DEFAULT NULL,
@@ -54,9 +55,6 @@ CREATE TABLE `nodelist` (
   `sleepperiod` int(11) DEFAULT '900',
   `advcfg` tinyint(1) DEFAULT '0',
   `advcfgkey` varchar(32) DEFAULT NULL,
-  `usegetvcc` tinyint(1) DEFAULT '0',
-  `vccoffset` smallint(6) DEFAULT '0',
-  `vccdivsor` varchar(8) DEFAULT '5.545',
   `hastout` tinyint(1) DEFAULT '0',
   `owpwr` smallint(6) DEFAULT '1',
   `owdat` smallint(6) DEFAULT '13',
@@ -67,10 +65,17 @@ CREATE TABLE `nodelist` (
   `hasi2c` tinyint(1) DEFAULT '0',
   `iotsda` tinyint(4) DEFAULT '12',
   `iotscl` tinyint(4) DEFAULT '14',
-  `rawadc` tinyint(1) DEFAULT '0',
-  `ntpoffset` tinyint(4) DEFAULT '4',
   `hasvout` tinyint(1) DEFAULT '0',
   `hasrssi` tinyint(1) DEFAULT '0',
+  `haststat` tinyint(1) DEFAULT '0',
+  `hasrgb` tinyint(1) DEFAULT '0',
+  `hasfan` tinyint(1) DEFAULT '0',
+  `hasadc` tinyint(1) DEFAULT '0',
+  `rawadc` tinyint(1) DEFAULT '0',
+  `acsoffset` smallint(6) DEFAULT '1641',
+  `usegetvcc` tinyint(1) DEFAULT '0',
+  `vccoffset` smallint(6) DEFAULT '0',
+  `vccdivsor` varchar(8) DEFAULT '5.545',
   `sw1en` tinyint(1) DEFAULT '-1',
   `sw2en` tinyint(1) DEFAULT '-1',
   `sw3en` tinyint(1) DEFAULT '-1',
@@ -83,20 +88,22 @@ CREATE TABLE `nodelist` (
   `sw2label` varchar(32) DEFAULT 'Switch Two',
   `sw3label` varchar(32) DEFAULT 'Switch Three',
   `sw4label` varchar(32) DEFAULT 'Switch Four',
-  `acsoffset` smallint(6) DEFAULT '1641',
+  `sw1type` tinyint(4) DEFAULT '0',
+  `sw2type` tinyint(4) DEFAULT '0',
+  `sw3type` tinyint(4) DEFAULT '0',
+  `sw4type` tinyint(4) DEFAULT '0',
   `updaterate` smallint(6) DEFAULT '50',
   `currentip` varchar(20) DEFAULT '0.0.0.0',
   `flashmb` tinyint(4) DEFAULT '1',
   `altadcvbat` tinyint(1) DEFAULT '0',
   `mvpera` varchar(8) NOT NULL DEFAULT '44.0',
-  `sw1type` tinyint(4) DEFAULT '0',
-  `sw2type` tinyint(4) DEFAULT '0',
-  `sw3type` tinyint(4) DEFAULT '0',
-  `sw4type` tinyint(4) DEFAULT '0',
-  `hasrgb` tinyint(1) DEFAULT '0',
+  `timeOut` tinyint(1) DEFAULT '0',
+  `rgbwchan` tinyint(1) DEFAULT '57',
+  `tstatmode` tinyint(1) DEFAULT '-1',
+  `tstatset` tinyint(1) DEFAULT '21',
   PRIMARY KEY (`id`),
   UNIQUE KEY `mac` (`mac`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5498 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -108,4 +115,4 @@ CREATE TABLE `nodelist` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-06 10:36:33
+-- Dump completed on 2018-05-05 22:05:35
