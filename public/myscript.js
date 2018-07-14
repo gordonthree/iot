@@ -94,7 +94,7 @@ $(document).on("pagecreate",function() {
 									case 'bat':
 										$("#footer2").html("Battery " +cmds[1]+" volts");
 										break;
-									case 'vcc':
+									case 'volts':
 										$("#footer2").html("Vcc " +cmds[1]+" volts");
 										break;
 									case 'remain':
