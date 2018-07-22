@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (armv8l)
+-- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (armv7l)
 --
 -- Host: localhost    Database: iot
 -- ------------------------------------------------------
@@ -16,12 +16,19 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `iot`
+-- Table structure for table `alt_history`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `iot` /*!40100 DEFAULT CHARACTER SET latin1 */;
-
-USE `iot`;
+DROP TABLE IF EXISTS `alt_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alt_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `alt` varchar(25) DEFAULT '0',
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8760672 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `amps`
@@ -40,7 +47,23 @@ CREATE TABLE `amps` (
   KEY `nodename` (`nodename`),
   KEY `sensor` (`sensor`),
   KEY `value` (`value`)
-) ENGINE=InnoDB AUTO_INCREMENT=16777215 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cmd_history`
+--
+
+DROP TABLE IF EXISTS `cmd_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cmd_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodename` varchar(100) DEFAULT NULL,
+  `cmd` varchar(255) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20220 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,7 +80,39 @@ CREATE TABLE `current_temps` (
   `temperature` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nodename` (`nodename`)
-) ENGINE=InnoDB AUTO_INCREMENT=4250179 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29146 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `loc_history`
+--
+
+DROP TABLE IF EXISTS `loc_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `loc_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lat` varchar(255) DEFAULT NULL,
+  `lon` varchar(255) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8760609 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `msg_history`
+--
+
+DROP TABLE IF EXISTS `msg_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `msg_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodename` varchar(100) DEFAULT NULL,
+  `msg` varchar(255) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +131,7 @@ CREATE TABLE `node_updates` (
   `url` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nodename` (`nodename`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +146,7 @@ CREATE TABLE `nodelist` (
   `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `mac` varchar(12) NOT NULL,
   `nodename` varchar(32) NOT NULL,
-  `fwpath` varchar(200) DEFAULT '/home/pi/fw/autoconf_1m.bin',
+  `fwpath` varchar(200) DEFAULT '/home/pi/fw/autoconf_4m.bin',
   `spiffspath` varchar(200) DEFAULT NULL,
   `lastseen` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updatets` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -111,6 +166,7 @@ CREATE TABLE `nodelist` (
   `subnet` varchar(16) DEFAULT NULL,
   `dns1` varchar(16) DEFAULT NULL,
   `ntpserver` varchar(200) DEFAULT 'us.pool.ntp.org',
+  `ntpoffset` tinyint(4) DEFAULT '4',
   `role` varchar(200) DEFAULT NULL,
   `location` varchar(200) DEFAULT NULL,
   `notes` varchar(200) DEFAULT NULL,
@@ -118,9 +174,6 @@ CREATE TABLE `nodelist` (
   `sleepperiod` int(11) DEFAULT '900',
   `advcfg` tinyint(1) DEFAULT '0',
   `advcfgkey` varchar(32) DEFAULT NULL,
-  `usegetvcc` tinyint(1) DEFAULT '0',
-  `vccoffset` smallint(6) DEFAULT '0',
-  `vccdivsor` varchar(8) DEFAULT '5.545',
   `hastout` tinyint(1) DEFAULT '0',
   `owpwr` smallint(6) DEFAULT '1',
   `owdat` smallint(6) DEFAULT '13',
@@ -131,11 +184,17 @@ CREATE TABLE `nodelist` (
   `hasi2c` tinyint(1) DEFAULT '0',
   `iotsda` tinyint(4) DEFAULT '12',
   `iotscl` tinyint(4) DEFAULT '14',
-  `rawadc` tinyint(1) DEFAULT '0',
-  `ntpoffset` tinyint(4) DEFAULT '4',
   `hasvout` tinyint(1) DEFAULT '0',
   `hasrssi` tinyint(1) DEFAULT '0',
   `haststat` tinyint(1) DEFAULT '0',
+  `hasrgb` tinyint(1) DEFAULT '0',
+  `hasfan` tinyint(1) DEFAULT '0',
+  `hasadc` tinyint(1) DEFAULT '0',
+  `rawadc` tinyint(1) DEFAULT '0',
+  `acsoffset` smallint(6) DEFAULT '1641',
+  `usegetvcc` tinyint(1) DEFAULT '0',
+  `vccoffset` smallint(6) DEFAULT '0',
+  `vccdivsor` varchar(8) DEFAULT '5.545',
   `sw1en` tinyint(1) DEFAULT '-1',
   `sw2en` tinyint(1) DEFAULT '-1',
   `sw3en` tinyint(1) DEFAULT '-1',
@@ -148,26 +207,22 @@ CREATE TABLE `nodelist` (
   `sw2label` varchar(32) DEFAULT 'Switch Two',
   `sw3label` varchar(32) DEFAULT 'Switch Three',
   `sw4label` varchar(32) DEFAULT 'Switch Four',
-  `acsoffset` smallint(6) DEFAULT '1641',
+  `sw1type` tinyint(4) DEFAULT '0',
+  `sw2type` tinyint(4) DEFAULT '0',
+  `sw3type` tinyint(4) DEFAULT '0',
+  `sw4type` tinyint(4) DEFAULT '0',
   `updaterate` smallint(6) DEFAULT '50',
   `currentip` varchar(20) DEFAULT '0.0.0.0',
   `flashmb` tinyint(4) DEFAULT '1',
   `altadcvbat` tinyint(1) DEFAULT '0',
   `mvpera` varchar(8) NOT NULL DEFAULT '44.0',
-  `sw1type` tinyint(4) DEFAULT '0',
-  `sw2type` tinyint(4) DEFAULT '0',
-  `sw3type` tinyint(4) DEFAULT '0',
-  `sw4type` tinyint(4) DEFAULT '0',
-  `hasrgb` tinyint(1) DEFAULT '0',
-  `hasfan` tinyint(1) DEFAULT '0',
   `timeOut` tinyint(1) DEFAULT '0',
   `rgbwchan` tinyint(1) DEFAULT '57',
-  `hasadc` tinyint(1) DEFAULT '0',
   `tstatmode` tinyint(1) DEFAULT '-1',
   `tstatset` tinyint(1) DEFAULT '21',
   PRIMARY KEY (`id`),
   UNIQUE KEY `mac` (`mac`)
-) ENGINE=InnoDB AUTO_INCREMENT=5498 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +241,23 @@ CREATE TABLE `nodes` (
   `payload` varchar(1023) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nodename` (`nodename`)
-) ENGINE=InnoDB AUTO_INCREMENT=8388607 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5181062 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `reboot_history`
+--
+
+DROP TABLE IF EXISTS `reboot_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reboot_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodename` varchar(100) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1177 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +274,7 @@ CREATE TABLE `rssi` (
   `rssi` varchar(10) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `topic` (`nodename`)
-) ENGINE=InnoDB AUTO_INCREMENT=7218057 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,7 +291,22 @@ CREATE TABLE `rssi_history` (
   `rssi` varchar(10) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `rssi` (`rssi`)
-) ENGINE=InnoDB AUTO_INCREMENT=8388607 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1714522 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `speed_history`
+--
+
+DROP TABLE IF EXISTS `speed_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `speed_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `speed` varchar(25) DEFAULT '0',
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8760588 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -243,6 +329,25 @@ CREATE TABLE `temps` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `temps_history`
+--
+
+DROP TABLE IF EXISTS `temps_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `temps_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodename` varchar(100) DEFAULT NULL,
+  `temp` varchar(10) DEFAULT NULL,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `node_index` (`nodename`),
+  KEY `temp_index` (`temp`),
+  KEY `ts_index` (`ts`)
+) ENGINE=InnoDB AUTO_INCREMENT=16963424 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `vbat`
 --
 
@@ -257,7 +362,7 @@ CREATE TABLE `vbat` (
   `notified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `topic` (`topic`)
-) ENGINE=InnoDB AUTO_INCREMENT=1749083 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -276,6 +381,42 @@ CREATE TABLE `vbat_history` (
   KEY `battery` (`battery`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `volts`
+--
+
+DROP TABLE IF EXISTS `volts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `volts` (
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `nodename` varchar(100) NOT NULL,
+  `voltage` varchar(8) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `node_idx` (`nodename`)
+) ENGINE=InnoDB AUTO_INCREMENT=1424 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `volts_history`
+--
+
+DROP TABLE IF EXISTS `volts_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `volts_history` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodename` varchar(100) DEFAULT NULL,
+  `voltage` varchar(10) DEFAULT '0',
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ts_index` (`ts`),
+  KEY `volts_index` (`voltage`),
+  KEY `node_index` (`nodename`)
+) ENGINE=InnoDB AUTO_INCREMENT=11931519 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -286,4 +427,4 @@ CREATE TABLE `vbat_history` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-04 10:03:19
+-- Dump completed on 2018-07-21 21:04:26
